@@ -3,75 +3,622 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>xHOSM — редизайн интерфейса</title>
-<link rel="stylesheet" href="https://anders7rusk.github.io/iiko-ds-web/tokens.css">
-<link rel="stylesheet" href="https://anders7rusk.github.io/iiko-ds-web/styles.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap">
+<title>xHOSM — новый интерфейс (черновик)</title>
+<!--
+  ЧЕРНОВИК НОВОГО ИНТЕРФЕЙСА xHOSM — структура «Клиент и сервер».
+  Интерфейс собирается только из компонентов ДС (классы ds-*, токены --ds-*).
+  Подключение ДС — ОТНОСИТЕЛЬНЫЙ путь ../iiko-ds-web/ (ДС из организации):
+  файл должен лежать рядом с клоном iiko-ds-web (например, в общей папке DS
+  рядом с iiko-ds-web, iiko-ds-mobile, iiko-ds-prototypes).
+  Свои классы — только обвязка раскладки (rail/topbar/grid/DLG).
+
+  Что внутри (черновик, без полировки):
+  1. Рабочий стол смены: очередь операций + «требует внимания» + мои клиенты
+  2. Карточка клиента: лицензии, серверы, последние операции
+  3. Карточка сервера: доказательный статус, метрики, вкладки, диалог «Перезапуск»
+-->
+<link rel="stylesheet" href="../iiko-ds-web/font.css">
+<link rel="stylesheet" href="../iiko-ds-web/tokens.css">
+<link rel="stylesheet" href="../iiko-ds-web/styles.css">
+<link rel="stylesheet" href="../iiko-ds-web/components/index.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
 <style>
-  /* страница-витрина: каркас */
-  body { margin: 0; background: #F8F9FC; color: #333333; font-family: Roboto, 'Helvetica Neue', Arial, sans-serif; }
-  .page { max-width: 880px; margin: 0 auto; padding: 48px 24px 64px; }
-  h1 { font-size: 34px; line-height: 40px; font-weight: 500; margin: 0; }
-  .lead { font-size: 16px; line-height: 24px; color: #616161; margin: 10px 0 32px; }
-  .card { background: #FFFFFF; border: 1px solid #E0E0E0; border-radius: 12px; padding: 4px 0; margin-bottom: 24px; }
-  .item { display: flex; align-items: center; gap: 16px; padding: 14px 20px; text-decoration: none; color: inherit; border-bottom: 1px solid #EEEEEE; }
-  .item:last-child { border-bottom: none; }
-  .item:hover { background: #F8F9FC; }
-  .item .material-icons-outlined { color: #616161; flex-shrink: 0; }
-  .item__title { font-size: 16px; line-height: 22px; font-weight: 500; }
-  .item__sub { font-size: 13px; line-height: 18px; color: #616161; margin-top: 2px; }
-  .soon { border: 1px dashed #E0E0E0; border-radius: 12px; padding: 20px; color: #616161; font-size: 14px; line-height: 20px; }
-  .soon b { color: #448AFF; font-weight: 500; }
-  .foot { margin-top: 28px; font-size: 13px; color: #9E9E9E; }
-  .foot a { color: #448AFF; text-decoration: none; }
+/* ===== обвязка раскладки (не компоненты) ===== */
+* { box-sizing: border-box; }
+body { margin: 0; background: #F8F9FC; color: #333333; font-family: Roboto, 'Helvetica Neue', Arial, sans-serif; }
+.app { display: flex; min-height: 100vh; }
+
+/* рельса навигации */
+.rail { width: 220px; flex-shrink: 0; background: #263136; display: flex; flex-direction: column; padding: 12px 0 16px; }
+.rail__brand { color: #FFFFFF; font-size: 20px; font-weight: 500; padding: 8px 20px 18px; letter-spacing: .3px; }
+.rail__items { display: flex; flex-direction: column; gap: 2px; }
+.rail .ds-sidenav-control { cursor: pointer; }
+.rail .ds-sidenav-control--expanded { background: transparent; }
+.rail__item--active.ds-sidenav-control--expanded { background: #1B2429; }
+.rail__bottom { margin-top: auto; padding: 12px 16px 0; border-top: 1px solid #3A464C; display: flex; align-items: center; gap: 10px; color: #FFFFFF; font-size: 13px; }
+.rail__avatar { width: 28px; height: 28px; border-radius: 50%; background: #448AFF; color: #FFF; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+
+/* верхняя панель */
+.main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.topbar { height: 64px; background: #FFFFFF; border-bottom: 1px solid #E0E0E0; display: flex; align-items: center; gap: 16px; padding: 0 24px; }
+.topbar__title { font-size: 18px; font-weight: 500; line-height: 24px; }
+.topbar__sub { font-size: 12px; color: #9E9E9E; }
+.topbar__search { flex: 1; max-width: 520px; margin-left: 24px; }
+.topbar__search .ds-search { width: 100%; }
+.topbar__search input { border: none; outline: none; background: transparent; flex: 1; font: inherit; font-size: 15px; color: #333333; }
+.topbar__search input::placeholder { color: #9E9E9E; }
+.topbar__right { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+.chip-draft { margin-left: 12px; }
+
+/* контент */
+.content { padding: 20px 24px 40px; max-width: 1280px; width: 100%; }
+.view { display: none; }
+.view--active { display: block; }
+.grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; align-items: start; }
+.grid-2b { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.col { display: flex; flex-direction: column; gap: 16px; }
+
+/* шапка экрана */
+.head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+.head__titles { display: flex; flex-direction: column; gap: 2px; }
+.head h1 { margin: 0; font-size: 24px; line-height: 30px; font-weight: 500; display: flex; align-items: center; gap: 10px; }
+.head__sub { font-size: 13px; color: #616161; }
+.head__actions { margin-left: auto; }
+
+/* карточки-списки */
+.stack { display: flex; flex-direction: column; }
+.stack .ds-list-item { border-bottom: 1px solid #F0F1F5; }
+.stack .ds-list-item:last-child { border-bottom: none; }
+.ds-list-item { cursor: default; }
+.ds-list-item--link { cursor: pointer; }
+
+/* мини-сетка параметров */
+.kv { display: grid; grid-template-columns: 160px 1fr auto; gap: 8px 12px; padding: 4px 16px 12px; align-items: center; font-size: 14px; }
+.kv__k { color: #616161; }
+.kv__v { color: #333333; font-weight: 500; }
+.kv__v--mono { font-family: 'Roboto Mono', Consolas, monospace; font-weight: 400; letter-spacing: .3px; }
+
+/* таблица серверов */
+.tbl { width: 100%; }
+.tbl .ds-table-header-row, .tbl .ds-table-content-row { display: flex; align-items: center; }
+.tbl .ds-table-header-cell, .tbl .ds-table-content-cell { padding: 10px 8px; font-size: 13px; }
+.c-domain { flex: 2.2; } .c-status { flex: 1.3; } .c-ver { flex: 1.1; } .c-mem { flex: .8; } .c-act { flex: .9; text-align: right; }
+.row-link { cursor: pointer; }
+.row-link:hover .ds-table-content-cell { background: #F8F9FC; }
+
+/* метрики */
+.metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+.metric { background: #FFFFFF; border: 1px solid #E0E0E0; border-radius: 12px; padding: 12px 16px; }
+.metric__label { font-size: 12px; color: #616161; margin-bottom: 4px; }
+.metric__value { font-size: 18px; font-weight: 500; }
+.metric__hint { font-size: 12px; color: #9E9E9E; margin-top: 2px; }
+
+/* статус-строка (доказательный статус) */
+.proof { display: flex; align-items: center; gap: 10px; padding: 4px 16px 0; }
+.proof__path { font-size: 13px; color: #616161; }
+.proof__history { padding: 8px 16px 12px; font-size: 12px; color: #9E9E9E; }
+
+/* вкладки-контент */
+.tabs-body { padding: 4px 0 0; }
+.tabs-body > div { display: none; }
+.tabs-body > .tab-on { display: block; }
+
+/* быстрые действия */
+.quick { display: flex; gap: 8px; flex-wrap: wrap; padding: 12px 16px 16px; }
+
+/* логи */
+.logs { background: #1B2429; border-radius: 8px; padding: 12px 16px; font-family: 'Roboto Mono', Consolas, monospace; font-size: 12px; line-height: 20px; color: #C9D3DA; margin: 0 16px 12px; }
+.logs .err { color: #FF8A80; }
+.logs .warn { color: #FFD180; }
+.logs-search { padding: 12px 16px 8px; }
+.logs-search .ds-search { width: 320px; }
+
+/* диалог */
+.dlg-wrap { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(33,33,33,.4); z-index: 50; }
+.dlg-wrap--open { display: flex; }
+.dlg { width: 560px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.24); overflow: hidden; }
+.dlg .ds-dialog-header { padding: 20px 24px 8px; }
+.dlg .ds-dialog-header h2 { margin: 0; font-size: 18px; font-weight: 500; }
+.dlg .ds-dialog-content { padding: 8px 24px 16px; font-size: 14px; color: #333333; }
+.dlg .ds-dialog-footer { padding: 12px 24px 20px; display: flex; justify-content: flex-end; }
+.dlg__stepper { margin: 14px 0 10px; }
+.dlg__note { font-size: 13px; color: #616161; margin-top: 10px; }
+
+/* снекбар */
+.snack-wrap { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 60; display: none; }
+.snack-wrap--visible { display: block; }
+
+/* черновая пометка на экранах */
+.draft-band { background: #E8F1FF; color: #2962FF; border-radius: 8px; font-size: 12px; padding: 6px 12px; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 14px; }
 </style>
 </head>
 <body>
-<div class="page">
-  <h1>xHOSM — редизайн интерфейса</h1>
-  <p class="lead">Переделываем интерфейс xHOSM в удобный и понятный — на дизайн-системе iiko.<br>
-  Состояние: исследование и гипотезы готовы; дальше — черновик нового интерфейса.</p>
+<div class="app">
 
-  <div class="card">
-    <a class="item" href="xHOSM_материалы_для_нового_интерфейса.pdf">
-      <span class="material-icons-outlined">description</span>
-      <span><div class="item__title">Материалы для нового интерфейса</div>
-      <div class="item__sub">Как устроен текущий интерфейс: панели, сущности, статусы, лимиты</div></span>
-    </a>
-    <a class="item" href="xHOSM_боли_и_замечания.pdf">
-      <span class="material-icons-outlined">report_problem</span>
-      <span><div class="item__title">Боли и замечания</div>
-      <div class="item__sub">Что не устраивает в работе с системой — с источниками</div></span>
-    </a>
-    <a class="item" href="xHOSM_сценарии_работы_v1.pdf">
-      <span class="material-icons-outlined">fact_check</span>
-      <span><div class="item__title">Сценарии работы (v1)</div>
-      <div class="item__sub">20 операционных сценариев поддержки — черновик</div></span>
-    </a>
-    <a class="item" href="xHOSM_сценарии_интерфейса_v1.pdf">
-      <span class="material-icons-outlined">account_tree</span>
-      <span><div class="item__title">Сценарии интерфейса + блок-схемы (v1)</div>
-      <div class="item__sub">30 клик-путей по экранам — черновик</div></span>
-    </a>
-    <a class="item" href="xHOSM_гипотезы_улучшений_v1.pdf">
-      <span class="material-icons-outlined">lightbulb</span>
-      <span><div class="item__title">Гипотезы улучшений (v1)</div>
-      <div class="item__sub">16 гипотез: что и как менять, как проверяем</div></span>
-    </a>
-    <a class="item" href="xHOSM_совмещение_с_процессом_v1.pdf">
-      <span class="material-icons-outlined">timeline</span>
-      <span><div class="item__title">Совмещение с процессом разработки</div>
-      <div class="item__sub">Привязка этапов проекта к процессу — справочно</div></span>
-    </a>
+  <!-- ============ РЕЛЬСА ============ -->
+  <nav class="rail" aria-label="Разделы">
+    <div class="rail__brand">xHOSM</div>
+    <div class="rail__items">
+      <div class="ds-sidenav-control ds-sidenav-control--expanded rail__item rail__item--active js-nav" data-view="desk">
+        <span class="ds-sidenav-control__icon material-icons" aria-hidden="true">dashboard</span>
+        <span class="ds-sidenav-control__label">Рабочий стол</span>
+      </div>
+      <div class="ds-sidenav-control ds-sidenav-control--expanded rail__item" data-view="client">
+        <span class="ds-sidenav-control__icon material-icons" aria-hidden="true">business</span>
+        <span class="ds-sidenav-control__label">Клиент</span>
+      </div>
+      <div class="ds-sidenav-control ds-sidenav-control--expanded rail__item" data-view="server">
+        <span class="ds-sidenav-control__icon material-icons" aria-hidden="true">dns</span>
+        <span class="ds-sidenav-control__label">Сервер</span>
+      </div>
+      <div class="ds-sidenav-control ds-sidenav-control--expanded rail__item">
+        <span class="ds-sidenav-control__icon material-icons" aria-hidden="true">pending_actions</span>
+        <span class="ds-sidenav-control__label">Операции</span>
+      </div>
+      <div class="ds-sidenav-control ds-sidenav-control--expanded rail__item">
+        <span class="ds-sidenav-control__icon material-icons" aria-hidden="true">article</span>
+        <span class="ds-sidenav-control__label">Логи и отчёты</span>
+      </div>
+    </div>
+    <div class="rail__bottom">
+      <span class="rail__avatar">АС</span>
+      <span>Алексей С. · L3</span>
+      <span class="material-icons" style="margin-left:auto" aria-hidden="true">help_outline</span>
+    </div>
+  </nav>
+
+  <div class="main">
+    <!-- ============ ВЕРХНЯЯ ПАНЕЛЬ ============ -->
+    <header class="topbar">
+      <div>
+        <div class="topbar__title" id="pageTitle">Рабочий стол</div>
+        <div class="topbar__sub" id="pageSub">дежурная смена · ср, 18 сентября</div>
+      </div>
+      <span class="ds-status ds-status--accent ds-status--text chip-draft"><span class="ds-status__label">Черновик</span></span>
+      <div class="topbar__search">
+        <div class="ds-search">
+          <span class="ds-search__icon material-icons" aria-hidden="true">search</span>
+          <input type="text" placeholder="CRM ID, UID, домен, название клиента…" aria-label="Поиск по всему">
+        </div>
+      </div>
+      <div class="topbar__right">
+        <button class="ds-btn-icon ds-btn-icon--m ds-btn-icon--neutral ds-btn-icon--text" type="button" aria-label="Уведомления">
+          <span class="ds-btn-icon__icon material-icons" aria-hidden="true">notifications</span>
+        </button>
+        <button class="ds-btn-icon ds-btn-icon--m ds-btn-icon--neutral ds-btn-icon--text" type="button" aria-label="Справка">
+          <span class="ds-btn-icon__icon material-icons" aria-hidden="true">help</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ================== ВИД 1: РАБОЧИЙ СТОЛ ================== -->
+      <section class="view view--active" id="view-desk">
+        <span class="draft-band"><span class="material-icons" style="font-size:16px" aria-hidden="true">construction</span> черновик: структура и логика, без полировки — смотрите сценарии, а не красоту</span>
+        <div class="grid-2">
+          <div class="col">
+            <div class="ds-card ds-card--outlined">
+              <div class="ds-card__header" style="display:flex;align-items:center">
+                <span class="ds-card__title" style="flex:1">Операции сейчас</span>
+                <button class="ds-btn ds-btn--s ds-btn--neutral ds-btn--text" type="button"><span class="ds-btn__label">Все операции</span></button>
+              </div>
+              <div class="ds-card__divider"></div>
+              <div class="ds-card__content stack" style="padding:0">
+                <div class="ds-list-item">
+                  <span class="ds-list-item__icon material-icons" aria-hidden="true">restart_alt</span>
+                  <div class="ds-list-item__content" style="flex:1">
+                    <span class="ds-list-item__label">Перезапуск · romashka-01.iiko.it</span>
+                    <span class="ds-list-item__label-down">Шаг 2 из 3 — запуск службы · начато 12:40</span>
+                  </div>
+                  <span class="ds-list-item__element-right"><span class="ds-status ds-status--warning ds-status--filled"><span class="ds-status__label">Выполняется</span></span></span>
+                </div>
+                <div class="ds-list-item">
+                  <span class="ds-list-item__icon material-icons" aria-hidden="true">system_update</span>
+                  <div class="ds-list-item__content" style="flex:1">
+                    <span class="ds-list-item__label">Обновление версии · syrve-cafe-12.iiko.it</span>
+                    <span class="ds-list-item__label-down">В очереди · ждёт технического окна 12:45</span>
+                  </div>
+                  <span class="ds-list-item__element-right"><span class="ds-status ds-status--neutral ds-status--filled"><span class="ds-status__label">В очереди</span></span></span>
+                </div>
+                <div class="ds-list-item">
+                  <span class="ds-list-item__icon material-icons" aria-hidden="true">backup</span>
+                  <div class="ds-list-item__content" style="flex:1">
+                    <span class="ds-list-item__label">Резервная копия БД · tula-cafe-3.iiko.it</span>
+                    <span class="ds-list-item__label-down">Завершено 12:38 · 4,2 ГБ · хранится 30 дней</span>
+                  </div>
+                  <span class="ds-list-item__element-right"><span class="ds-status ds-status--positive ds-status--filled"><span class="ds-status__label">Готово</span></span></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="ds-card ds-card--outlined">
+              <div class="ds-card__header"><span class="ds-card__title">Мои клиенты</span></div>
+              <div class="ds-card__divider"></div>
+              <div class="ds-card__content stack" style="padding:0">
+                <div class="ds-list-item ds-list-item--link js-nav" data-view="client">
+                  <span class="ds-list-item__icon material-icons" aria-hidden="true">star</span>
+                  <div class="ds-list-item__content" style="flex:1">
+                    <span class="ds-list-item__label">ООО «Ромашка»</span>
+                    <span class="ds-list-item__label-down">3 сервера · один обновляется · CRM 1023456</span>
+                  </div>
+                  <span class="ds-list-item__element-right material-icons" aria-hidden="true" style="color:#9E9E9E">chevron_right</span>
+                </div>
+                <div class="ds-list-item ds-list-item--link">
+                  <span class="ds-list-item__icon material-icons" aria-hidden="true">business</span>
+                  <div class="ds-list-item__content" style="flex:1">
+                    <span class="ds-list-item__label">Кафе «Юг»</span>
+                    <span class="ds-list-item__label-down">1 сервер · остановлен вчера в 22:10</span>
+                  </div>
+                  <span class="ds-list-item__element-right material-icons" aria-hidden="true" style="color:#9E9E9E">chevron_right</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="ds-card ds-card--outlined">
+              <div class="ds-card__header"><span class="ds-card__title">Требует внимания</span></div>
+              <div class="ds-card__content" style="padding:12px 16px;display:flex;flex-direction:column;gap:8px">
+                <div class="ds-banner ds-banner--negative ds-banner--horizontal">
+                  <span class="ds-banner__icon material-icons" aria-hidden="true">error_outline</span>
+                  <span class="ds-banner__text">Cloud: красный статус у «Анталия-2» — проверьте сервер</span>
+                </div>
+                <div class="ds-banner ds-banner--warning ds-banner--horizontal">
+                  <span class="ds-banner__icon material-icons" aria-hidden="true">schedule</span>
+                  <span class="ds-banner__text">Открытые смены мешают обновлению: 3 сервера</span>
+                </div>
+                <div class="ds-banner ds-banner--neutral ds-banner--horizontal">
+                  <span class="ds-banner__icon material-icons" aria-hidden="true">sync_problem</span>
+                  <span class="ds-banner__text">Не прошли доставки по API вчера: 2 сервера</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================== ВИД 2: КЛИЕНТ ================== -->
+      <section class="view" id="view-client">
+        <div class="head">
+          <button class="ds-btn-icon ds-btn-icon--m ds-btn-icon--neutral ds-btn-icon--text js-nav" data-view="desk" type="button" aria-label="Назад">
+            <span class="ds-btn-icon__icon material-icons" aria-hidden="true">arrow_back</span>
+          </button>
+          <div class="head__titles">
+            <h1>ООО «Ромашка» <span class="ds-status ds-status--positive ds-status--filled"><span class="ds-status__label">Контракт активен</span></span></h1>
+            <span class="head__sub">CRM 1023456 · Дилер: Юг-Сервис · Бренд: iikoRMS</span>
+          </div>
+          <div class="head__actions">
+            <div class="ds-btn-group ds-btn-group--horizontal">
+              <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button">
+                <span class="ds-btn__icon material-icons" aria-hidden="true">open_in_new</span>
+                <span class="ds-btn__label">Открыть в CRM</span>
+              </button>
+              <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button">
+                <span class="ds-btn__icon material-icons" aria-hidden="true">add</span>
+                <span class="ds-btn__label">Создать сервер</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="col">
+            <div class="ds-card ds-card--outlined">
+              <div class="ds-card__header"><span class="ds-card__title">Лицензии и доступы</span></div>
+              <div class="ds-card__divider"></div>
+              <div class="kv">
+                <span class="kv__k">UID</span>
+                <span class="kv__v kv__v--mono">123-456-789-000</span>
+                <button class="ds-btn ds-btn--s ds-btn--neutral ds-btn--text" type="button"><span class="ds-btn__label">Показать</span></button>
+                <span class="kv__k">iikoUser</span>
+                <span class="kv__v kv__v--mono">ivanov_user</span>
+                <button class="ds-btn ds-btn--s ds-btn--neutral ds-btn--text" type="button"><span class="ds-btn__label">Показать</span></button>
+                <span class="kv__k">Версия по умолчанию</span>
+                <span class="kv__v">v9.2.8035.0</span>
+                <button class="ds-btn ds-btn--s ds-btn--neutral ds-btn--text" type="button"><span class="ds-btn__label">Изменить</span></button>
+                <span class="kv__k">Память / период</span>
+                <span class="kv__v">4 ГБ · 180 дней</span>
+                <span></span>
+              </div>
+            </div>
+
+            <div class="ds-card ds-card--outlined">
+              <div class="ds-card__header"><span class="ds-card__title">Серверы (3)</span></div>
+              <div class="ds-card__divider"></div>
+              <div class="tbl ds-table" role="table" aria-label="Серверы клиента">
+                <div class="ds-table-header-row" role="row">
+                  <div class="ds-table-header-cell c-domain" role="columnheader"><span class="ds-table-header-cell__label">Домен</span></div>
+                  <div class="ds-table-header-cell c-status" role="columnheader"><span class="ds-table-header-cell__label">Статус</span></div>
+                  <div class="ds-table-header-cell c-ver" role="columnheader"><span class="ds-table-header-cell__label">Версия</span></div>
+                  <div class="ds-table-header-cell c-mem" role="columnheader"><span class="ds-table-header-cell__label">Память</span></div>
+                  <div class="ds-table-header-cell c-act" role="columnheader"></div>
+                </div>
+                <div class="ds-table-content-row row-link js-nav" data-view="server" role="row">
+                  <div class="ds-table-content-cell c-domain" role="cell">romashka-01.iiko.it</div>
+                  <div class="ds-table-content-cell c-status" role="cell"><span class="ds-status ds-status--positive ds-status--filled"><span class="ds-status__label">Работает</span></span></div>
+                  <div class="ds-table-content-cell c-ver" role="cell">v9.2.8035.0</div>
+                  <div class="ds-table-content-cell c-mem" role="cell">4 ГБ</div>
+                  <div class="ds-table-content-cell c-act" role="cell"><span class="material-icons" style="color:#9E9E9E" aria-hidden="true">chevron_right</span></div>
+                </div>
+                <div class="ds-table-content-row row-link" role="row">
+                  <div class="ds-table-content-cell c-domain" role="cell">romashka-office.iiko.it</div>
+                  <div class="ds-table-content-cell c-status" role="cell"><span class="ds-status ds-status--warning ds-status--filled"><span class="ds-status__label">Обновляется</span></span></div>
+                  <div class="ds-table-content-cell c-ver" role="cell">v9.1.7124.0</div>
+                  <div class="ds-table-content-cell c-mem" role="cell">2 ГБ</div>
+                  <div class="ds-table-content-cell c-act" role="cell"><span class="material-icons" style="color:#9E9E9E" aria-hidden="true">chevron_right</span></div>
+                </div>
+                <div class="ds-table-content-row row-link" role="row">
+                  <div class="ds-table-content-cell c-domain" role="cell">romashka-test.iiko.it</div>
+                  <div class="ds-table-content-cell c-status" role="cell"><span class="ds-status ds-status--neutral ds-status--filled"><span class="ds-status__label">Остановлен</span></span></div>
+                  <div class="ds-table-content-cell c-ver" role="cell">v9.1.7124.0</div>
+                  <div class="ds-table-content-cell c-mem" role="cell">1 ГБ</div>
+                  <div class="ds-table-content-cell c-act" role="cell"><span class="material-icons" style="color:#9E9E9E" aria-hidden="true">chevron_right</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="ds-card ds-card--outlined">
+              <div class="ds-card__header"><span class="ds-card__title">Последние операции</span></div>
+              <div class="ds-card__divider"></div>
+              <div class="ds-card__content stack" style="padding:0">
+                <div class="ds-list-item">
+                  <div class="ds-list-item__content" style="flex:1">
+                    <span class="ds-list-item__label">Перезапуск · romashka-01</span>
+                    <span class="ds-list-item__label-down">сегодня 12:40 · выполняется</span>
+                  </div>
+                  <span class="ds-list-item__element-right"><span class="ds-status ds-status--warning ds-status--text"><span class="ds-status__label">в работе</span></span></span>
+                </div>
+                <div class="ds-list-item">
+                  <div class="ds-list-item__content" style="flex:1">
+                    <span class="ds-list-item__label">Обновление · romashka-office</span>
+                    <span class="ds-list-item__label-down">сегодня 11:05 · успешно</span>
+                  </div>
+                  <span class="ds-list-item__element-right"><span class="ds-status ds-status--positive ds-status--text"><span class="ds-status__label">ок</span></span></span>
+                </div>
+                <div class="ds-list-item">
+                  <div class="ds-list-item__content" style="flex:1">
+                    <span class="ds-list-item__label">Бэкап БД · romashka-01</span>
+                    <span class="ds-list-item__label-down">сегодня 12:38 · 4,2 ГБ</span>
+                  </div>
+                  <span class="ds-list-item__element-right"><span class="ds-status ds-status--positive ds-status--text"><span class="ds-status__label">ок</span></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================== ВИД 3: СЕРВЕР ================== -->
+      <section class="view" id="view-server">
+        <div class="head">
+          <button class="ds-btn-icon ds-btn-icon--m ds-btn-icon--neutral ds-btn-icon--text js-nav" data-view="client" type="button" aria-label="Назад">
+            <span class="ds-btn-icon__icon material-icons" aria-hidden="true">arrow_back</span>
+          </button>
+          <div class="head__titles">
+            <h1>romashka-01.iiko.it <span class="ds-status ds-status--positive ds-status--filled"><span class="ds-status__label">Работает</span></span></h1>
+            <span class="head__sub">ООО «Ромашка» · v9.2.8035.0 · кластер RU-1 · 4 ГБ · период 180 дней</span>
+          </div>
+          <div class="head__actions">
+            <div class="ds-btn-group ds-btn-group--horizontal">
+              <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button">
+                <span class="ds-btn__icon material-icons" aria-hidden="true">stop</span>
+                <span class="ds-btn__label">Остановить</span>
+              </button>
+              <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" id="btnRestart">
+                <span class="ds-btn__icon material-icons" aria-hidden="true">restart_alt</span>
+                <span class="ds-btn__label">Перезапуск</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="ds-card ds-card--outlined" style="margin-bottom:16px">
+          <div class="ds-card__header"><span class="ds-card__title">Статус</span></div>
+          <div class="ds-card__divider"></div>
+          <div class="ds-card__content" style="padding:0">
+            <div class="proof">
+              <span class="ds-status ds-status--positive ds-status--filled"><span class="ds-status__label">Работает</span></span>
+              <span class="proof__path">Проверено агентом сервера · 12 секунд назад · источники совпадают (мониторинг Cloud)</span>
+              <button class="ds-btn ds-btn--s ds-btn--neutral ds-btn--text" type="button" style="margin-left:auto"><span class="ds-btn__label">Перепроверить</span></button>
+            </div>
+            <div class="proof__history">Последняя смена статуса: сегодня 12:40 — «Авто» → «Остановлен» (был автоперезапуск службы). Открытых смен: 0.</div>
+          </div>
+        </div>
+
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric__label">Память RMS</div>
+            <div class="metric__value">2,1 / 4 ГБ</div>
+            <div class="metric__hint">лимит по контракту: 4 ГБ</div>
+          </div>
+          <div class="metric">
+            <div class="metric__label">База данных</div>
+            <div class="metric__value">12,4 ГБ</div>
+            <div class="metric__hint">бэкап сегодня 12:38</div>
+          </div>
+          <div class="metric">
+            <div class="metric__label">Период хранения</div>
+            <div class="metric__value">180 дней</div>
+            <div class="metric__hint">архив: 3 записи</div>
+          </div>
+        </div>
+
+        <div class="ds-tabs" role="tablist" aria-label="Разделы сервера">
+          <button class="ds-tab ds-tab--active" type="button" role="tab" aria-selected="true" data-tab="over">Обзор</button>
+          <button class="ds-tab" type="button" role="tab" aria-selected="false" data-tab="svc">Служба</button>
+          <button class="ds-tab" type="button" role="tab" aria-selected="false" data-tab="logs">Логи</button>
+          <button class="ds-tab" type="button" role="tab" aria-selected="false" data-tab="hist">История</button>
+        </div>
+
+        <div class="tabs-body" style="margin-top:16px">
+          <div class="tab-on" id="tab-over">
+            <div class="ds-card ds-card--outlined">
+              <div class="ds-card__header"><span class="ds-card__title">Быстрые действия</span></div>
+              <div class="quick">
+                <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button"><span class="ds-btn__icon material-icons" aria-hidden="true">restart_alt</span><span class="ds-btn__label">Перезапустить</span></button>
+                <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button"><span class="ds-btn__icon material-icons" aria-hidden="true">backup</span><span class="ds-btn__label">Сделать бэкап</span></button>
+                <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button"><span class="ds-btn__icon material-icons" aria-hidden="true">article</span><span class="ds-btn__label">Открыть логи</span></button>
+                <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button"><span class="ds-btn__icon material-icons" aria-hidden="true">system_update</span><span class="ds-btn__label">Сменить версию</span></button>
+              </div>
+            </div>
+          </div>
+
+          <div id="tab-svc">
+            <div class="ds-card ds-card--outlined">
+              <div class="ds-card__header"><span class="ds-card__title">Служба RMS</span></div>
+              <div class="ds-card__divider"></div>
+              <div class="kv">
+                <span class="kv__k">Состояние службы</span><span class="kv__v">RUNNING</span><span></span>
+                <span class="kv__k">Последний запуск</span><span class="kv__v">сегодня 12:41 (автоперезапуск)</span><span></span>
+                <span class="kv__k">Открытых смен</span><span class="kv__v">0</span><span class="kv__k">перед обновлением нужен 0</span>
+              </div>
+              <div style="padding:0 16px 12px">
+                <label class="ds-checkbox"><input class="ds-checkbox__input" type="checkbox"><span class="ds-checkbox__box material-icons" aria-hidden="true"></span><span class="ds-checkbox__label">Очистить unsaveddata при следующем запуске</span></label>
+              </div>
+            </div>
+          </div>
+
+          <div id="tab-logs">
+            <div class="ds-card ds-card--outlined">
+              <div class="ds-card__header" style="display:flex;align-items:center"><span class="ds-card__title" style="flex:1">Логи сервера</span>
+                <button class="ds-btn ds-btn--s ds-btn--neutral ds-btn--outlined" type="button"><span class="ds-btn__icon material-icons" aria-hidden="true">download</span><span class="ds-btn__label">Скачать архив</span></button>
+              </div>
+              <div class="logs-search">
+                <div class="ds-search ds-search--s">
+                  <span class="ds-search__icon material-icons" aria-hidden="true">search</span>
+                  <input type="text" placeholder="Поиск по логам: ERROR, сделка, доставка…" aria-label="Поиск по логам" style="border:none;outline:none;background:transparent;flex:1;font:inherit;font-size:13px">
+                </div>
+              </div>
+              <div class="logs">
+                <div>12:41:02 INFO  Служба запущена, версия 9.2.8035.0</div>
+                <div class="warn">12:41:07 WARN  Не удалось подключиться к серверу лицензий, повтор…</div>
+                <div>12:41:09 INFO  Лицензия подтверждена (UID 123-456-789-000)</div>
+                <div class="err">12:42:14 ERROR Обмен с iikoOffice: таймаут 30 c (order #4821)</div>
+                <div class="err">12:42:44 ERROR Обмен с iikoOffice: таймаут 30 c (order #4822)</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="tab-hist">
+            <div class="ds-card ds-card--outlined">
+              <div class="ds-card__header"><span class="ds-card__title">История</span></div>
+              <div class="ds-card__divider"></div>
+              <div class="ds-card__content stack" style="padding:0">
+                <div class="ds-list-item">
+                  <span class="ds-list-item__icon material-icons" aria-hidden="true">restart_alt</span>
+                  <div class="ds-list-item__content" style="flex:1"><span class="ds-list-item__label">Автоперезапуск службы</span><span class="ds-list-item__label-down">сегодня 12:40 · код 0</span></div>
+                  <span class="ds-list-item__element-right"><span class="ds-status ds-status--positive ds-status--text"><span class="ds-status__label">успешно</span></span></span>
+                </div>
+                <div class="ds-list-item">
+                  <span class="ds-list-item__icon material-icons" aria-hidden="true">backup</span>
+                  <div class="ds-list-item__content" style="flex:1"><span class="ds-list-item__label">Бэкап базы</span><span class="ds-list-item__label-down">сегодня 12:38 · 4,2 ГБ</span></div>
+                  <span class="ds-list-item__element-right"><span class="ds-status ds-status--positive ds-status--text"><span class="ds-status__label">успешно</span></span></span>
+                </div>
+                <div class="ds-list-item">
+                  <span class="ds-list-item__icon material-icons" aria-hidden="true">system_update</span>
+                  <div class="ds-list-item__content" style="flex:1"><span class="ds-list-item__label">Обновление 9.1.7124.0 → 9.2.8035.0</span><span class="ds-list-item__label-down">вчера 23:10 · в тех.окно</span></div>
+                  <span class="ds-list-item__element-right"><span class="ds-status ds-status--positive ds-status--text"><span class="ds-status__label">успешно</span></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
   </div>
-
-  <div class="soon">
-    <b>Скоро здесь:</b> интерактивные «доработки UX» — черновик нового интерфейса
-    с переключением «как сейчас / как предлагаем» и режимом сбора замечаний.
-  </div>
-
-  <div class="foot">Исходники и рабочие файлы: <a href="https://github.com/Anders7Rusk/XHosm">github.com/Anders7Rusk/XHosm</a></div>
 </div>
+
+<!-- ============ ДИАЛОГ «ПЕРЕЗАПУСК» ============ -->
+<div class="dlg-wrap" id="dlgRestart" role="dialog" aria-modal="true" aria-label="Перезапуск сервера">
+  <div class="dlg">
+    <div class="ds-dialog-header">
+      <h2>Перезапуск · romashka-01.iiko.it</h2>
+    </div>
+    <div class="ds-dialog-content">
+      План операции:
+      <div class="dlg__stepper ds-stepper">
+        <button class="ds-step ds-step--selected" type="button"><span class="ds-step__num">1</span><span>Остановка</span></button>
+        <span class="ds-stepper__divider"></span>
+        <button class="ds-step" type="button"><span class="ds-step__num">2</span><span>Запуск</span></button>
+        <span class="ds-stepper__divider"></span>
+        <button class="ds-step" type="button"><span class="ds-step__num">3</span><span>Проверка</span></button>
+      </div>
+      <label class="ds-checkbox"><input class="ds-checkbox__input" type="checkbox" id="chkUnsaved"><span class="ds-checkbox__box material-icons" aria-hidden="true"></span><span class="ds-checkbox__label">Очистить unsaveddata перед запуском</span></label>
+      <div class="dlg__note">Займёт ≈ 2 минуты · тех.окно не требуется · прогресс будет виден в «Операции сейчас».</div>
+    </div>
+    <div class="ds-dialog-footer">
+      <div class="ds-btn-group ds-btn-group--horizontal ds-btn-group--margins">
+        <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" id="btnCancel">Отмена</button>
+        <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" id="btnRun">Запустить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ СНЕКБАР ============ -->
+<div class="snack-wrap" id="snack">
+  <div class="ds-snackbar ds-snackbar--light ds-snackbar--single">
+    <span class="ds-snackbar__icon material-icons" aria-hidden="true">check_circle</span>
+    <span class="ds-snackbar__label">Перезапуск запущен · смотрите прогресс в «Операции сейчас»</span>
+  </div>
+</div>
+
+<script>
+/* обвязка: переключение экранов, вкладок, диалог, снекбар — черновик */
+(function () {
+  var titles = {
+    desk:   ['Рабочий стол', 'дежурная смена · ср, 18 сентября'],
+    client: ['Клиент',       'карточка клиента · ООО «Ромашка»'],
+    server: ['Сервер',       'карточка сервера · romashka-01.iiko.it']
+  };
+
+  function showView(name) {
+    document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('view--active'); });
+    var el = document.getElementById('view-' + name);
+    if (el) el.classList.add('view--active');
+    var t = titles[name] || titles.desk;
+    document.getElementById('pageTitle').textContent = t[0];
+    document.getElementById('pageSub').textContent = t[1];
+    document.querySelectorAll('.rail__item').forEach(function (i) {
+      i.classList.toggle('rail__item--active', i.getAttribute('data-view') === name);
+    });
+    window.scrollTo(0, 0);
+  }
+
+  document.querySelectorAll('.js-nav').forEach(function (el) {
+    el.addEventListener('click', function () { showView(el.getAttribute('data-view')); });
+  });
+
+  /* вкладки сервера */
+  document.querySelectorAll('.ds-tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('.ds-tab').forEach(function (t) { t.classList.remove('ds-tab--active'); t.setAttribute('aria-selected', 'false'); });
+      tab.classList.add('ds-tab--active'); tab.setAttribute('aria-selected', 'true');
+      var id = 'tab-' + tab.getAttribute('data-tab');
+      document.querySelectorAll('.tabs-body > div').forEach(function (p) { p.classList.remove('tab-on'); });
+      var p = document.getElementById(id); if (p) p.classList.add('tab-on');
+    });
+  });
+
+  /* диалог перезапуска */
+  var dlg = document.getElementById('dlgRestart');
+  document.getElementById('btnRestart').addEventListener('click', function () { dlg.classList.add('dlg-wrap--open'); });
+  document.getElementById('btnCancel').addEventListener('click', function () { dlg.classList.remove('dlg-wrap--open'); });
+  dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.classList.remove('dlg-wrap--open'); });
+
+  /* запуск операции → снекбар */
+  var snack = document.getElementById('snack');
+  document.getElementById('btnRun').addEventListener('click', function () {
+    dlg.classList.remove('dlg-wrap--open');
+    snack.classList.add('snack-wrap--visible');
+    setTimeout(function () { snack.classList.remove('snack-wrap--visible'); }, 5000);
+  });
+})();
+</script>
 </body>
 </html>
