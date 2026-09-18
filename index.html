@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>xHOSM — редизайн интерфейса</title>
+<link rel="stylesheet" href="https://anders7rusk.github.io/iiko-ds-web/tokens.css">
+<link rel="stylesheet" href="https://anders7rusk.github.io/iiko-ds-web/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+<style>
+  /* страница-витрина: каркас */
+  body { margin: 0; background: #F8F9FC; color: #333333; font-family: Roboto, 'Helvetica Neue', Arial, sans-serif; }
+  .page { max-width: 880px; margin: 0 auto; padding: 48px 24px 64px; }
+  h1 { font-size: 34px; line-height: 40px; font-weight: 500; margin: 0; }
+  .lead { font-size: 16px; line-height: 24px; color: #616161; margin: 10px 0 32px; }
+  .card { background: #FFFFFF; border: 1px solid #E0E0E0; border-radius: 12px; padding: 4px 0; margin-bottom: 24px; }
+  .item { display: flex; align-items: center; gap: 16px; padding: 14px 20px; text-decoration: none; color: inherit; border-bottom: 1px solid #EEEEEE; }
+  .item:last-child { border-bottom: none; }
+  .item:hover { background: #F8F9FC; }
+  .item .material-icons-outlined { color: #616161; flex-shrink: 0; }
+  .item__title { font-size: 16px; line-height: 22px; font-weight: 500; }
+  .item__sub { font-size: 13px; line-height: 18px; color: #616161; margin-top: 2px; }
+  .soon { border: 1px dashed #E0E0E0; border-radius: 12px; padding: 20px; color: #616161; font-size: 14px; line-height: 20px; }
+  .soon b { color: #448AFF; font-weight: 500; }
+  .foot { margin-top: 28px; font-size: 13px; color: #9E9E9E; }
+  .foot a { color: #448AFF; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>xHOSM — редизайн интерфейса</h1>
+  <p class="lead">Переделываем интерфейс xHOSM в удобный и понятный — на дизайн-системе iiko.<br>
+  Состояние: исследование и гипотезы готовы; дальше — черновик нового интерфейса.</p>
+
+  <div class="card">
+    <a class="item" href="xHOSM_материалы_для_нового_интерфейса.pdf">
+      <span class="material-icons-outlined">description</span>
+      <span><div class="item__title">Материалы для нового интерфейса</div>
+      <div class="item__sub">Как устроен текущий интерфейс: панели, сущности, статусы, лимиты</div></span>
+    </a>
+    <a class="item" href="xHOSM_боли_и_замечания.pdf">
+      <span class="material-icons-outlined">report_problem</span>
+      <span><div class="item__title">Боли и замечания</div>
+      <div class="item__sub">Что не устраивает в работе с системой — с источниками</div></span>
+    </a>
+    <a class="item" href="xHOSM_сценарии_работы_v1.pdf">
+      <span class="material-icons-outlined">fact_check</span>
+      <span><div class="item__title">Сценарии работы (v1)</div>
+      <div class="item__sub">20 операционных сценариев поддержки — черновик</div></span>
+    </a>
+    <a class="item" href="xHOSM_сценарии_интерфейса_v1.pdf">
+      <span class="material-icons-outlined">account_tree</span>
+      <span><div class="item__title">Сценарии интерфейса + блок-схемы (v1)</div>
+      <div class="item__sub">30 клик-путей по экранам — черновик</div></span>
+    </a>
+    <a class="item" href="xHOSM_гипотезы_улучшений_v1.pdf">
+      <span class="material-icons-outlined">lightbulb</span>
+      <span><div class="item__title">Гипотезы улучшений (v1)</div>
+      <div class="item__sub">16 гипотез: что и как менять, как проверяем</div></span>
+    </a>
+    <a class="item" href="xHOSM_совмещение_с_процессом_v1.pdf">
+      <span class="material-icons-outlined">timeline</span>
+      <span><div class="item__title">Совмещение с процессом разработки</div>
+      <div class="item__sub">Привязка этапов проекта к процессу — справочно</div></span>
+    </a>
+  </div>
+
+  <div class="soon">
+    <b>Скоро здесь:</b> интерактивные «доработки UX» — черновик нового интерфейса
+    с переключением «как сейчас / как предлагаем» и режимом сбора замечаний.
+  </div>
+
+  <div class="foot">Исходники и рабочие файлы: <a href="https://github.com/Anders7Rusk/XHosm">github.com/Anders7Rusk/XHosm</a></div>
+</div>
+</body>
+</html>
