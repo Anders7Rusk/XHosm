@@ -389,6 +389,11 @@ button.ds-chips { cursor: pointer; }
   animation: xh-panel-in .18s ease-out; }
 /* открыта правая панель — страница не скроллится: скроллбары не дают зазоров у краёв панели */
 html.xh-panel-open, html.xh-panel-open body { overflow: hidden; }
+/* узкие экраны (телефон/планшет): панель занимает весь экран — как мобильный drawer, без отступов */
+@media (max-width: 900px) {
+  .xh-overlay--right { inset: 0; }
+  .xh-overlay--right .xh-dlg { width: 100%; max-width: 100%; border-radius: 0; }
+}
 @keyframes xh-panel-in { from { transform: translateX(32px); opacity: .5; } to { transform: translateX(0); opacity: 1; } }
 /* косяк ДС: заголовок Dialog_DS — white-space: nowrap (в узкой панели длинный обрезается) —
    в панели разрешаем перенос строк */
