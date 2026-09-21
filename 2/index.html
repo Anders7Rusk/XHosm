@@ -380,6 +380,16 @@ button.ds-chips { cursor: pointer; }
 .xh-dlg { position: relative; width: var(--ds-dialog-width, 500px); max-width: 100%; max-height: calc(100vh - 64px);
   display: flex; flex-direction: column; }
 .xh-dlg--wide { width: 640px; }
+/* КОСЯК ДС: выезжающей панели справа (Drawer/Side sheet) в ДС нет — обвязка прототипа на токенах ДС
+   (dialog-background/dialog-border-radius); передано в review-notes. Для больших попапов с настройками */
+.xh-overlay--right { align-items: stretch; justify-content: flex-end; padding: 0; }
+.xh-overlay--right .xh-dlg { width: 560px; max-width: 100vw; height: 100%; max-height: 100vh;
+  border-radius: var(--ds-dialog-border-radius, 12px) 0 0 var(--ds-dialog-border-radius, 12px);
+  animation: xh-panel-in .18s ease-out; }
+@keyframes xh-panel-in { from { transform: translateX(32px); opacity: .5; } to { transform: translateX(0); opacity: 1; } }
+/* косяк ДС: заголовок Dialog_DS — white-space: nowrap (в узкой панели длинный обрезается) —
+   в панели разрешаем перенос строк */
+.xh-overlay--right .ds-dialog-header__label { white-space: normal; line-height: 1.25; }
 .ds-dialog-view { overflow: hidden; }
 .ds-dialog-content { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
 .ds-dialog-content__scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; flex-direction: column;
@@ -3636,7 +3646,7 @@ ORDER BY s.date_open;</textarea>
 <div id="xh-dialogs">
 
   <!-- Э-4: диалог операции (план → время → подтверждение) -->
-  <div class="xh-overlay" id="dlg-op" hidden>
+  <div class="xh-overlay xh-overlay--right" id="dlg-op" hidden>
     <div class="ds-backdrop" data-dlg-close></div>
     <div class="ds-dialog-view xh-dlg">
       <div class="ds-dialog-header ds-dialog-header--text">
@@ -3766,7 +3776,7 @@ ORDER BY s.date_open;</textarea>
   </div>
 
   <!-- Э-7/Э-10: выдача iikoUser — причина, срок, журнал -->
-  <div class="xh-overlay" id="dlg-iikouser" hidden>
+  <div class="xh-overlay xh-overlay--right" id="dlg-iikouser" hidden>
     <div class="ds-backdrop" data-dlg-close></div>
     <div class="ds-dialog-view xh-dlg">
       <div class="ds-dialog-header ds-dialog-header--text">
@@ -3818,7 +3828,7 @@ ORDER BY s.date_open;</textarea>
   </div>
 
   <!-- Э-3: план обновления версии (файлы → бэкап → рестарт → ревизия) -->
-  <div class="xh-overlay" id="dlg-ver" hidden>
+  <div class="xh-overlay xh-overlay--right" id="dlg-ver" hidden>
     <div class="ds-backdrop" data-dlg-close></div>
     <div class="ds-dialog-view xh-dlg">
       <div class="ds-dialog-header ds-dialog-header--text">
@@ -3864,7 +3874,7 @@ ORDER BY s.date_open;</textarea>
   </div>
 
   <!-- UI-L3-09: закрытие/удаление кассовых смен -->
-  <div class="xh-overlay" id="dlg-shift" hidden>
+  <div class="xh-overlay xh-overlay--right" id="dlg-shift" hidden>
     <div class="ds-backdrop" data-dlg-close></div>
     <div class="ds-dialog-view xh-dlg">
       <div class="ds-dialog-header ds-dialog-header--text">
@@ -3916,7 +3926,7 @@ ORDER BY s.date_open;</textarea>
   </div>
 
   <!-- UI-L3-12: мастер-цепочка «Перевод RMS → Chain» -->
-  <div class="xh-overlay" id="dlg-chain" hidden>
+  <div class="xh-overlay xh-overlay--right" id="dlg-chain" hidden>
     <div class="ds-backdrop" data-dlg-close></div>
     <div class="ds-dialog-view xh-dlg">
       <div class="ds-dialog-header ds-dialog-header--text">
@@ -3964,7 +3974,7 @@ ORDER BY s.date_open;</textarea>
   </div>
 
   <!-- UI-D-02: Cloud Tools — сборки версий (переезжают, DO-976) и сертификаты devPortal (новое в xHOSM) -->
-  <div class="xh-overlay" id="dlg-cert" hidden>
+  <div class="xh-overlay xh-overlay--right" id="dlg-cert" hidden>
     <div class="ds-backdrop" data-dlg-close></div>
     <div class="ds-dialog-view xh-dlg">
       <div class="ds-dialog-header ds-dialog-header--text">
@@ -4073,7 +4083,7 @@ ORDER BY s.date_open;</textarea>
   </div>
 
   <!-- UI-I-01: мастер создания сервера (NSR) -->
-  <div class="xh-overlay" id="dlg-nsr" hidden>
+  <div class="xh-overlay xh-overlay--right" id="dlg-nsr" hidden>
     <div class="ds-backdrop" data-dlg-close></div>
     <div class="ds-dialog-view xh-dlg">
       <div class="ds-dialog-header ds-dialog-header--text">
@@ -4162,7 +4172,7 @@ ORDER BY s.date_open;</textarea>
   </div>
 
   <!-- UI-L3-13: мастер демо-стенда -->
-  <div class="xh-overlay" id="dlg-demo" hidden>
+  <div class="xh-overlay xh-overlay--right" id="dlg-demo" hidden>
     <div class="ds-backdrop" data-dlg-close></div>
     <div class="ds-dialog-view xh-dlg">
       <div class="ds-dialog-header ds-dialog-header--text">
@@ -4231,7 +4241,7 @@ ORDER BY s.date_open;</textarea>
   </div>
 
   <!-- UI-L3-16: мастер «Франшиза (iikoFranchise)» -->
-  <div class="xh-overlay" id="dlg-fr" hidden>
+  <div class="xh-overlay xh-overlay--right" id="dlg-fr" hidden>
     <div class="ds-backdrop" data-dlg-close></div>
     <div class="ds-dialog-view xh-dlg">
       <div class="ds-dialog-header ds-dialog-header--text">
@@ -4278,7 +4288,7 @@ ORDER BY s.date_open;</textarea>
   </div>
 
   <!-- Э-8: предпросмотр массовой операции — «что будет с N объектами» -->
-  <div class="xh-overlay" id="dlg-mass" hidden>
+  <div class="xh-overlay xh-overlay--right" id="dlg-mass" hidden>
     <div class="ds-backdrop" data-dlg-close></div>
     <div class="ds-dialog-view xh-dlg xh-dlg--wide">
       <div class="ds-dialog-header ds-dialog-header--text">
