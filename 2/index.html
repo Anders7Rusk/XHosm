@@ -384,15 +384,22 @@ button.ds-chips { cursor: pointer; }
    Панель — от верха до низа рабочей области (шапка тоже перекрывается панелью), страница видна слева */
 .xh-overlay--right { inset: 0 0 0 248px; padding: 0; align-items: stretch; justify-content: flex-end; }
 .xh-overlay--right .ds-backdrop { background: transparent; }
-.xh-overlay--right .xh-dlg { width: 560px; max-width: 100%; height: 100%; max-height: 100%;
+/* ширина панели — НЕ фиксированная: подстраивается под контент (узкая — по содержимому, широкая — растёт) */
+.xh-overlay--right .xh-dlg { width: fit-content; min-width: 400px; max-width: min(100%, 840px);
+  height: 100%; max-height: 100%;
   border-radius: var(--ds-dialog-border-radius, 12px) 0 0 var(--ds-dialog-border-radius, 12px);
   animation: xh-panel-in .18s ease-out; }
+/* косяк ДС: у header/content/footer диалога жёсткий width: 500px, из-за него ширина диалога «не подстраивается»
+   под контент. В панели снимаем жёсткость (auto): блоки принимают фактическую ширину панели */
+.xh-overlay--right .ds-dialog-header,
+.xh-overlay--right .ds-dialog-content,
+.xh-overlay--right .ds-dialog-footer { width: auto; }
 /* открыта правая панель — страница не скроллится: скроллбары не дают зазоров у краёв панели */
 html.xh-panel-open, html.xh-panel-open body { overflow: hidden; }
 /* узкие экраны (телефон/планшет): панель занимает весь экран — как мобильный drawer, без отступов */
 @media (max-width: 900px) {
   .xh-overlay--right { inset: 0; }
-  .xh-overlay--right .xh-dlg { width: 100%; max-width: 100%; border-radius: 0; }
+  .xh-overlay--right .xh-dlg { width: 100%; min-width: 0; max-width: 100%; border-radius: 0; }
 }
 @keyframes xh-panel-in { from { transform: translateX(32px); opacity: .5; } to { transform: translateX(0); opacity: 1; } }
 /* косяк ДС: заголовок Dialog_DS — white-space: nowrap (в узкой панели длинный обрезается) —
