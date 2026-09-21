@@ -368,6 +368,10 @@ button.ds-chips { cursor: pointer; }
 .xh-wave__fill--pos { background: var(--ds-color-status-positive-filled-text-color, #14b456); }
 .xh-wave__fill--p42 { width: 42%; }
 .xh-wave__fill--full { width: 100%; }
+/* косяк ДС: у .ds-textarea жёсткий width: 250px — компонент не подстраивается под блок, в котором стоит
+   (вёрстка полей «уезжала»); ширина — по родителю (заказчик 21.09) */
+.ds-textarea { width: 100%; }
+.ds-textarea__scroll { width: 100%; }
 /* косяк ДС (в спеке только каркас): нет класса/стилей самого <textarea> — обвязка на токенах; каноны используют неопределённый ds-textarea__field */
 .ds-textarea textarea { width: 100%; border: none; outline: none; background: transparent; resize: vertical; padding: 0; font: var(--ds-font-body-s-14-normal-regular, 400 14px/20px 'Roboto'); color: var(--ds-color-text-primary, #333333); }
 .ds-textarea textarea::placeholder { color: var(--ds-color-form-field-input-label-text-color, #616161); }
@@ -389,11 +393,11 @@ button.ds-chips { cursor: pointer; }
   height: 100%; max-height: 100%;
   border-radius: var(--ds-dialog-border-radius, 12px) 0 0 var(--ds-dialog-border-radius, 12px);
   animation: xh-panel-in .18s ease-out; }
-/* косяк ДС: у header/content/footer диалога жёсткий width: 500px, из-за него ширина диалога «не подстраивается»
-   под контент. В панели снимаем жёсткость (auto): блоки принимают фактическую ширину панели */
-.xh-overlay--right .ds-dialog-header,
-.xh-overlay--right .ds-dialog-content,
-.xh-overlay--right .ds-dialog-footer { width: auto; }
+/* косяк ДС: у header/content/footer диалога жёсткий width: 500px — содержимое «не подстраивается» под ширину
+   диалога/панели. Снимаем жёсткость во ВСЕХ диалогах: блоки занимают ширину своего блока (auto) */
+.xh-overlay .ds-dialog-header,
+.xh-overlay .ds-dialog-content,
+.xh-overlay .ds-dialog-footer { width: auto; }
 /* косяк ДС: степпер не переносится — в узкой панели ряд шагов обрезается (dlg-chain, 912px) */
 .xh-overlay--right .ds-stepper { flex-wrap: wrap; row-gap: 8px; }
 /* открыта правая панель — страница не скроллится: скроллбары не дают зазоров у краёв панели */
