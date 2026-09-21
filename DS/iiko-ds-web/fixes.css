@@ -1,0 +1,50 @@
+/* ============================================================
+   iiko-ds-web/fixes.css — ручной слой правок поверх генерации ДС.
+   НЕ генерируется из Фигмы: обновления (токены / компоненты / шрифты)
+   этот файл не перезаписывают — правки не теряются, сколько бы раз
+   ни обновляли ДС.
+   Подключать ПОСЛЕДНИМ — после styles.css и components/index.css
+   (см. страницы в iiko-ds-prototypes; сгенерированные файлы не правим).
+   Сюда — только исправления артефактов генератора. Что чинить в самом
+   конвертере — iiko-ds-web/generator-rules.md; находки — review-notes.md.
+   ============================================================ */
+
+/* 1. Status: подпись не берёт цвет варианта — в сгенерированном status.css
+   у .ds-status__label жёстко прописан нейтральный цвет (в Фигме — вариант-токен).
+   review-notes п. 25. */
+.ds-status .ds-status__label{color:inherit}
+
+/* 2. Кадры полей теряют box-sizing — при height: 48px и паддингах 12×2 кадр
+   фактически 74px. review-notes п. 22. */
+.ds-input-number__frame,.ds-input-datepicker__frame{box-sizing:border-box}
+
+/* 3. Sidenav: подпись пункта/шапки не берёт цвет варианта — у `.ds-sidenav-item__label`
+   жёстко прописан l3-цвет (#333), у `__header__label` — l2-цвет: на тёмном L1 не читается
+   (тот же артефакт генератора, что у Status, п. 1). review-notes п. 42. */
+.ds-sidenav-item--l1 .ds-sidenav-item__label,
+.ds-sidenav-header--l1 .ds-sidenav-header__label{color:inherit}
+
+/* 4. Snackbar --light: подпись не берёт цвет варианта — у `.ds-snackbar__label` жёстко
+   прописан цвет тёмного варианта (#ffffff): текст белым по белому. review-notes п. 43. */
+.ds-snackbar--light .ds-snackbar__label{color:inherit}
+
+/* 5. Chips: у `.ds-chips__close` нет `width` и центрирования содержимого (в Фигме — кадр 20×20
+   с иконкой по центру), у него и у `.ds-chips__add` жёстко прописан `background: #ffffff`
+   (не токен) — на `--filled`-чипсах крестик рисуется белым квадратом. review-notes п. 51. */
+.ds-chips__close{width:var(--ds-size-5x);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;background:none;color:var(--ds-color-chips-icon-color);cursor:pointer}
+.ds-chips__add{background:none;align-items:center}
+
+/* 6. Chips + Material Icons (страницы прототипов): глиф по умолчанию 24px вылезает из кадра
+   20×20 — прижимаем глифы крестика и левой иконки к размеру кадра (для svg-иконок ДС безвредно). */
+.ds-chips__close.material-icons,.ds-chips__icon .material-icons{font-size:var(--ds-size-5x);line-height:var(--ds-size-5x)}
+
+/* 7. Компоненты с display из генератора (.ds-status/.ds-banner/.ds-chips/.ds-card и др.)
+   перебивают атрибут [hidden] (класс сильнее UA-правила) — скрытые элементы продолжали
+   показываться (чипы в шапке карточки, скрытая карточка «Требует внимания» и т.п.).
+   Возвращаем семантику hidden глобально. */
+[hidden]{display:none !important}
+
+/* 8. Timepicker: у выбранного элемента (.ds-elements-2--selected) не задан фон —
+   в макетах выбранное значение подсвечено accent-filled, а текст у варианта белый:
+   без фона выбор не виден вовсе. review-notes п. 53. */
+.ds-elements-2--selected{background:var(--ds-color-button-accent-filled-default-background,#448aff)}
