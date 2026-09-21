@@ -204,6 +204,9 @@ body { background: var(--ds-paint-surface-default-v2, #f8f9fc); color: var(--ds-
 .xh-btnwrap { flex-wrap: wrap; }
 /* группы кнопок: при нехватке ширины переносятся, а не выезжают за блок (обвязка; «в строку, пока умещаются») */
 .ds-btn-group--horizontal { flex-wrap: wrap; }
+/* косяк обвязки: кнопки в баннере (напр. «Экспорт» + «Массовые действия») сжимались во flex-строке
+   и переносились в столбик — в баннере не сжимаем: держим одним рядом, ужимается текст (правило C5) */
+.ds-banner__buttons { flex-shrink: 0; }
 
 /* аккуратный ряд действий таблицы (вторичные кнопки — по ховеру строки, канон 7422) */
 .xh-acts { display: flex; gap: 4px; justify-content: flex-end; visibility: hidden; }
@@ -417,7 +420,13 @@ html.xh-panel-open, html.xh-panel-open body { overflow: hidden; }
   gap: 16px; padding: 16px 24px; width: 100%; }
 .xh-dlg-head { display: flex; align-items: center; justify-content: space-between; width: 100%;
   padding: 20px 24px 12px; }
-.xh-dlg-actions { display: flex; justify-content: flex-end; align-items: center; gap: 8px; padding: 16px 24px; }
+/* футер диалога/панели: кнопки — групповым компонентом (Button group, вариант Margins — для футеров);
+   обвязка только выравнивает группу вправо по центру, отступы от краёв даёт сама группа (8/16) */
+.xh-dlg-actions { display: flex; justify-content: flex-end; align-items: center; flex: 1 1 auto; padding: 0 8px; gap: 16px; }
+/* одиночная кнопка в футере (группы нет) — отступы от краёв как у остальных футеров */
+.xh-dlg-actions:not(:has(.ds-btn-group)) { padding: 16px 24px; }
+/* опция-чекбокс в футере — слева, кнопки-группа справа (прижатие опции) */
+.xh-dlg-actions > .ds-checkbox { margin-right: auto; }
 
 /* снекбар */
 .xh-snackbar-host { position: fixed; left: 50%; bottom: 32px; transform: translateX(-50%); z-index: 80; display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -3424,10 +3433,13 @@ ORDER BY s.date_open;</textarea>
             </div>
           </div>
           <div class="xh-row">
-            <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" id="uocRun"><span class="ds-btn__label">Запустить маршрут</span></button>
+            <!-- середина потока: второстепенные действия («если не позеленело») — слева группой, главное справа (памятка C5) -->
+            <div class="ds-btn-group ds-btn-group--horizontal">
+              <button class="ds-btn ds-btn--s ds-btn--neutral ds-btn--outlined" type="button" id="licGroovy"><span class="ds-btn__icon material-icons">terminal</span><span class="ds-btn__label">Groovy: Bcrypt part 1–2</span></button>
+              <button class="ds-btn ds-btn--s ds-btn--neutral ds-btn--outlined" type="button" id="uocNotGreen"><span class="ds-btn__label">Облачко не позеленело?</span></button>
+            </div>
             <span class="xh-caption">если не позеленело: чейны — Groovy Bcrypt part 1–2; одиночные — resetPasswordHashes (пароль придёт с обменом, до 10 минут)</span>
-            <button class="ds-btn ds-btn--s ds-btn--neutral ds-btn--outlined" type="button" id="licGroovy"><span class="ds-btn__icon material-icons">terminal</span><span class="ds-btn__label">Groovy: Bcrypt part 1–2</span></button>
-            <button class="ds-btn ds-btn--s ds-btn--neutral ds-btn--outlined" type="button" id="uocNotGreen"><span class="ds-btn__label">Облачко не позеленело?</span></button>
+            <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled xh-row-end" type="button" id="uocRun"><span class="ds-btn__label">Запустить маршрут</span></button>
           </div>
         </div></div>
       </div>
@@ -3790,8 +3802,10 @@ ORDER BY s.date_open;</textarea>
         </div>
       </div>
       <div class="ds-dialog-footer"><div class="xh-dlg-actions">
-        <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-dlg-close><span class="ds-btn__label">Отмена</span></button>
-        <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" id="opSubmit" data-dlg-close data-sim="Операция поставлена: Перезапуск — 1 сервер. Прогресс — в Центре задач|rocket_launch" data-sim-go-label="Открыть центр задач" data-sim-go="tasks"><span class="ds-btn__label">Запустить</span></button>
+        <div class="ds-btn-group ds-btn-group--horizontal ds-btn-group--margins">
+          <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-dlg-close><span class="ds-btn__label">Отмена</span></button>
+          <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" id="opSubmit" data-dlg-close data-sim="Операция поставлена: Перезапуск — 1 сервер. Прогресс — в Центре задач|rocket_launch" data-sim-go-label="Открыть центр задач" data-sim-go="tasks"><span class="ds-btn__label">Запустить</span></button>
+        </div>
       </div></div>
     </div>
   </div>
@@ -3842,8 +3856,10 @@ ORDER BY s.date_open;</textarea>
         </div>
       </div>
       <div class="ds-dialog-footer"><div class="xh-dlg-actions">
-        <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-dlg-close><span class="ds-btn__label">Отмена</span></button>
-        <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" data-dlg-close data-sim="iikoUser выдан: iikouser-4041958 · срок до 23:59 · запись добавлена в журнал выдачи|key"><span class="ds-btn__label">Выдать</span></button>
+        <div class="ds-btn-group ds-btn-group--horizontal ds-btn-group--margins">
+          <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-dlg-close><span class="ds-btn__label">Отмена</span></button>
+          <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" data-dlg-close data-sim="iikoUser выдан: iikouser-4041958 · срок до 23:59 · запись добавлена в журнал выдачи|key"><span class="ds-btn__label">Выдать</span></button>
+        </div>
       </div></div>
     </div>
   </div>
@@ -3888,8 +3904,10 @@ ORDER BY s.date_open;</textarea>
         </div>
       </div>
       <div class="ds-dialog-footer"><div class="xh-dlg-actions">
-        <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-dlg-close><span class="ds-btn__label">Отмена</span></button>
-        <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" id="verSubmit"><span class="ds-btn__label">Запустить</span></button>
+        <div class="ds-btn-group ds-btn-group--horizontal ds-btn-group--margins">
+          <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-dlg-close><span class="ds-btn__label">Отмена</span></button>
+          <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" id="verSubmit"><span class="ds-btn__label">Запустить</span></button>
+        </div>
       </div></div>
     </div>
   </div>
@@ -3940,8 +3958,10 @@ ORDER BY s.date_open;</textarea>
       </div>
       <div class="ds-dialog-footer"><div class="xh-dlg-actions">
         <span class="ds-checkbox"><input class="ds-checkbox__input" type="checkbox" id="shAuto" checked><span class="ds-checkbox__box material-icons" aria-hidden="true"></span><label class="ds-checkbox__label" for="shAuto">Автозапуск Tomcat после операции</label></span>
-        <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-dlg-close><span class="ds-btn__label">Отмена</span></button>
-        <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" id="shOk"><span class="ds-btn__label">Закрыть смену</span></button>
+        <div class="ds-btn-group ds-btn-group--horizontal ds-btn-group--margins">
+          <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-dlg-close><span class="ds-btn__label">Отмена</span></button>
+          <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" id="shOk"><span class="ds-btn__label">Закрыть смену</span></button>
+        </div>
       </div></div>
     </div>
   </div>
@@ -3988,8 +4008,10 @@ ORDER BY s.date_open;</textarea>
         </div>
       </div>
       <div class="ds-dialog-footer"><div class="xh-dlg-actions">
-        <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-dlg-close><span class="ds-btn__label">Отмена</span></button>
-        <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" id="chainNext"><span class="ds-btn__label">Выполнить шаг 1</span></button>
+        <div class="ds-btn-group ds-btn-group--horizontal ds-btn-group--margins">
+          <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-dlg-close><span class="ds-btn__label">Отмена</span></button>
+          <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" id="chainNext"><span class="ds-btn__label">Выполнить шаг 1</span></button>
+        </div>
       </div></div>
     </div>
   </div>
@@ -4097,8 +4119,10 @@ ORDER BY s.date_open;</textarea>
         </div>
       </div>
       <div class="ds-dialog-footer"><div class="xh-dlg-actions">
-        <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" id="pyrCancel"><span class="ds-btn__label">Отменить обновление</span></button>
-        <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" id="pyrOpen"><span class="ds-btn__icon material-icons">open_in_new</span><span class="ds-btn__label">Открыть в Pyrus</span></button>
+        <div class="ds-btn-group ds-btn-group--horizontal ds-btn-group--margins">
+          <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" id="pyrCancel"><span class="ds-btn__label">Отменить обновление</span></button>
+          <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" id="pyrOpen"><span class="ds-btn__icon material-icons">open_in_new</span><span class="ds-btn__label">Открыть в Pyrus</span></button>
+        </div>
       </div></div>
     </div>
   </div>
@@ -4186,8 +4210,10 @@ ORDER BY s.date_open;</textarea>
         </div>
       </div>
       <div class="ds-dialog-footer"><div class="xh-dlg-actions">
-        <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--text" type="button" id="nsrCancel"><span class="ds-btn__label">Cancel</span></button>
-        <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" id="nsrOk" disabled><span class="ds-btn__label">OK — создать</span></button>
+        <div class="ds-btn-group ds-btn-group--horizontal ds-btn-group--margins">
+          <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--text" type="button" id="nsrCancel"><span class="ds-btn__label">Cancel</span></button>
+          <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" id="nsrOk" disabled><span class="ds-btn__label">OK — создать</span></button>
+        </div>
       </div></div>
     </div>
   </div>
@@ -4255,8 +4281,10 @@ ORDER BY s.date_open;</textarea>
         </div>
       </div>
       <div class="ds-dialog-footer"><div class="xh-dlg-actions">
-        <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-dlg-close><span class="ds-btn__label">Закрыть</span></button>
-        <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" id="demoGo"><span class="ds-btn__label">Создать демо-стенд</span></button>
+        <div class="ds-btn-group ds-btn-group--horizontal ds-btn-group--margins">
+          <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-dlg-close><span class="ds-btn__label">Закрыть</span></button>
+          <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" id="demoGo"><span class="ds-btn__label">Создать демо-стенд</span></button>
+        </div>
       </div></div>
     </div>
   </div>
@@ -4302,8 +4330,10 @@ ORDER BY s.date_open;</textarea>
         </div>
       </div>
       <div class="ds-dialog-footer"><div class="xh-dlg-actions">
-        <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" id="frLogs"><span class="ds-btn__label">Логи контура</span></button>
-        <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" id="frGo"><span class="ds-btn__label">Дальше</span></button>
+        <div class="ds-btn-group ds-btn-group--horizontal ds-btn-group--margins">
+          <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" id="frLogs"><span class="ds-btn__label">Логи контура</span></button>
+          <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" id="frGo"><span class="ds-btn__label">Дальше</span></button>
+        </div>
       </div></div>
     </div>
   </div>
@@ -4341,8 +4371,10 @@ ORDER BY s.date_open;</textarea>
         </div>
       </div>
       <div class="ds-dialog-footer"><div class="xh-dlg-actions">
-        <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-dlg-close><span class="ds-btn__label">Отмена</span></button>
-        <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" data-dlg-close data-sim="Запущено волнами: волна 1 из 2 — 100 серверов. Отчёт по строкам — на экране «Массовые»|rocket_launch"><span class="ds-btn__label">Запустить волнами</span></button>
+        <div class="ds-btn-group ds-btn-group--horizontal ds-btn-group--margins">
+          <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-dlg-close><span class="ds-btn__label">Отмена</span></button>
+          <button class="ds-btn ds-btn--m ds-btn--accent ds-btn--filled" type="button" data-dlg-close data-sim="Запущено волнами: волна 1 из 2 — 100 серверов. Отчёт по строкам — на экране «Массовые»|rocket_launch"><span class="ds-btn__label">Запустить волнами</span></button>
+        </div>
       </div></div>
     </div>
   </div>
