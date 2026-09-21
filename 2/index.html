@@ -380,10 +380,11 @@ button.ds-chips { cursor: pointer; }
 .xh-dlg { position: relative; width: var(--ds-dialog-width, 500px); max-width: 100%; max-height: calc(100vh - 64px);
   display: flex; flex-direction: column; }
 .xh-dlg--wide { width: 640px; }
-/* КОСЯК ДС: выезжающей панели справа (Drawer/Side sheet) в ДС нет — обвязка прототипа на токенах ДС
-   (dialog-background/dialog-border-radius); передано в review-notes. Для больших попапов с настройками */
-.xh-overlay--right { align-items: stretch; justify-content: flex-end; padding: 0; }
-.xh-overlay--right .xh-dlg { width: 560px; max-width: 100vw; height: 100%; max-height: 100vh;
+/* КОСЯК ДС: выезжающей панели справа (Drawer/Side sheet) в ДС нет — обвязка прототипа на токенах ДС.
+   Панель живёт в рабочей области страницы (рельса/топбар видны), затемнения нет — страница видна */
+.xh-overlay--right { inset: 64px 0 0 248px; padding: 0; align-items: stretch; justify-content: flex-end; }
+.xh-overlay--right .ds-backdrop { background: transparent; }
+.xh-overlay--right .xh-dlg { width: 560px; max-width: 100%; height: 100%; max-height: 100%;
   border-radius: var(--ds-dialog-border-radius, 12px) 0 0 var(--ds-dialog-border-radius, 12px);
   animation: xh-panel-in .18s ease-out; }
 @keyframes xh-panel-in { from { transform: translateX(32px); opacity: .5; } to { transform: translateX(0); opacity: 1; } }
@@ -4446,6 +4447,8 @@ ORDER BY s.date_open;</textarea>
     var id = currentView();
     $$('.xh-view').forEach(function (v) { v.classList.toggle('xh-view--on', v.id === 'v-' + id); });
     $$('[data-nav]').forEach(function (a) { a.classList.toggle('xh-rail__item--active', a.dataset.nav === id); });
+    /* панель принадлежит странице: при смене раздела закрываем открытые правые панели */
+    $$('.xh-overlay--right').forEach(function (o) { o.hidden = true; });
     window.scrollTo(0, 0);
   }
   window.xhGo = function (id) { location.hash = '#/' + id; };
