@@ -385,7 +385,7 @@ button.ds-chips { cursor: pointer; }
 .xh-overlay--right { inset: 0 0 0 248px; padding: 0; align-items: stretch; justify-content: flex-end; }
 .xh-overlay--right .ds-backdrop { background: transparent; }
 /* ширина панели — НЕ фиксированная: подстраивается под контент (узкая — по содержимому, широкая — растёт) */
-.xh-overlay--right .xh-dlg { width: fit-content; min-width: 400px; max-width: min(100%, 840px);
+.xh-overlay--right .xh-dlg { width: fit-content; min-width: 400px; max-width: min(100%, 900px);
   height: 100%; max-height: 100%;
   border-radius: var(--ds-dialog-border-radius, 12px) 0 0 var(--ds-dialog-border-radius, 12px);
   animation: xh-panel-in .18s ease-out; }
@@ -394,6 +394,8 @@ button.ds-chips { cursor: pointer; }
 .xh-overlay--right .ds-dialog-header,
 .xh-overlay--right .ds-dialog-content,
 .xh-overlay--right .ds-dialog-footer { width: auto; }
+/* косяк ДС: степпер не переносится — в узкой панели ряд шагов обрезается (dlg-chain, 912px) */
+.xh-overlay--right .ds-stepper { flex-wrap: wrap; row-gap: 8px; }
 /* открыта правая панель — страница не скроллится: скроллбары не дают зазоров у краёв панели */
 html.xh-panel-open, html.xh-panel-open body { overflow: hidden; }
 /* узкие экраны (телефон/планшет): панель занимает весь экран — как мобильный drawer, без отступов */
