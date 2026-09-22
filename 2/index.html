@@ -1937,11 +1937,18 @@ zapravka.iiko.it
       </div>
       <div class="xh-caption xh-mt-8" id="srv-status-hist">История статуса: сегодня 09:00 — Auto → Stopped → Auto автоперезапуском; последний старт 09:12; открытых смен 0. Состояния домена: Creating / Auto / Stopped / Upgrading / BackupDB / RestoreDB / Archiving / Archived / Error / Demo / Maintenance — отображаются тональностями ДС, нативная палитра не переносится.</div>
       <div class="xh-row xh-mt-12">
-        <div class="ds-select-form ds-select-form--populated">
-          <div class="ds-select-form__input"><div class="ds-select-form__input-frame">
-            <span class="ds-select-form__label">Автообновление: 20 с</span>
-            <span class="ds-select-form__icon material-icons" aria-hidden="true">keyboard_arrow_down</span>
-          </div></div>
+        <div class="xh-dd-host" id="autoRefHost">
+          <button class="ds-btn ds-btn--s ds-btn--neutral ds-btn--outlined" type="button" aria-haspopup="listbox" aria-label="Автообновление">
+            <span class="ds-btn__label" id="autoRefLabel">Автообновление: 20 с</span>
+            <span class="ds-btn__icon material-icons" aria-hidden="true">keyboard_arrow_down</span>
+          </button>
+          <div class="xh-dd" hidden role="listbox" aria-label="Автообновление" id="autoRefDd">
+            <div class="ds-list-container__item" role="option" data-v="20" data-label="Автообновление: 20 с" aria-selected="true"><span class="ds-list-container__label">20 секунд</span><span class="xh-dd__mark material-icons">check</span></div>
+            <div class="ds-list-container__item" role="option" data-v="60" data-label="Автообновление: 60 с" aria-selected="false"><span class="ds-list-container__label">60 секунд</span><span class="xh-dd__mark material-icons">check</span></div>
+            <div class="ds-list-container__item" role="option" data-v="300" data-label="Автообновление: 5 мин" aria-selected="false"><span class="ds-list-container__label">5 минут (300 с)</span><span class="xh-dd__mark material-icons">check</span></div>
+            <div class="ds-list-container__item" role="option" data-v="900" data-label="Автообновление: 15 мин" aria-selected="false"><span class="ds-list-container__label">15 минут (900 с)</span><span class="xh-dd__mark material-icons">check</span></div>
+            <div class="ds-list-container__item" role="option" data-v="off" data-label="Автообновление: выкл" aria-selected="false"><span class="ds-list-container__label">Выключено</span><span class="xh-dd__mark material-icons">check</span></div>
+          </div>
         </div>
         <span class="ds-checkbox"><input class="ds-checkbox__input" type="checkbox" id="srv-more"><span class="ds-checkbox__box material-icons" aria-hidden="true"></span><label class="ds-checkbox__label" for="srv-more">Больше информации</label></span>
         <span class="xh-tip"><span class="ds-checkbox"><input class="ds-checkbox__input" type="checkbox" id="srv-port"><span class="ds-checkbox__box material-icons" aria-hidden="true"></span><label class="ds-checkbox__label" for="srv-port">Внутренний порт</label></span>
@@ -2005,7 +2012,7 @@ zapravka.iiko.it
         <div class="ds-card__content"><div class="ds-btn-group ds-btn-group--horizontal">
           <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-dlg="dlg-op"><span class="ds-btn__icon material-icons">restart_alt</span><span class="ds-btn__label">Перезапуск</span></button>
           <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-nav-go="data"><span class="ds-btn__icon material-icons">backup</span><span class="ds-btn__label">Бэкап БД</span></button>
-          <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-sim="SQL-студия: sql-k8s-ru-01 · база resto (MSSQL) — ярлык подключения открыт|database"><span class="ds-btn__icon material-icons">database</span><span class="ds-btn__label">SQL-студия</span></button>
+          <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-sim="SQL-студия: sql-k8s-ru-01 · база resto (MSSQL) — ярлык подключения открыт|storage"><span class="ds-btn__icon material-icons">storage</span><span class="ds-btn__label">SQL-студия</span></button>
           <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-nav-go-tab="ver" data-sim="Обновление версии — во вкладке «Версия»: план и флаги видны до запуска|system_update"><span class="ds-btn__icon material-icons">system_update</span><span class="ds-btn__label">Обновить версию</span></button>
           <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-nav-go="lic"><span class="ds-btn__icon material-icons">key</span><span class="ds-btn__label">Лицензии</span></button>
           <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-nav-go="logs"><span class="ds-btn__icon material-icons">description</span><span class="ds-btn__label">Логи</span></button>
@@ -2232,11 +2239,16 @@ zapravka.iiko.it
                   </div></div>
                 </div>
               </div>
-              <div class="ds-select-form ds-select-form--populated">
-                <div class="ds-select-form__input"><div class="ds-select-form__input-frame">
-                  <span class="ds-select-form__label">service: prod</span>
-                  <span class="ds-select-form__icon material-icons" aria-hidden="true">keyboard_arrow_down</span>
-                </div></div>
+              <div class="xh-dd-host" id="svcEnvHost">
+                <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" aria-haspopup="listbox" aria-label="Параметр service">
+                  <span class="ds-btn__label" id="svcEnvLabel">service: prod</span>
+                  <span class="ds-btn__icon material-icons" aria-hidden="true">keyboard_arrow_down</span>
+                </button>
+                <div class="xh-dd" hidden role="listbox" aria-label="Параметр service" id="svcEnvDd">
+                  <div class="ds-list-container__item" role="option" data-v="prod" data-label="service: prod" aria-selected="true"><span class="ds-list-container__label">prod</span><span class="xh-dd__mark material-icons">check</span></div>
+                  <div class="ds-list-container__item" role="option" data-v="beta" data-label="service: beta" aria-selected="false"><span class="ds-list-container__label">beta</span><span class="xh-dd__mark material-icons">check</span></div>
+                  <div class="ds-list-container__item" role="option" data-v="test" data-label="service: test" aria-selected="false"><span class="ds-list-container__label">test</span><span class="xh-dd__mark material-icons">check</span></div>
+                </div>
               </div>
               <div class="ds-textarea ds-textarea--empty">
                 <div class="ds-textarea__input-frame"><div class="ds-textarea__scroll">
@@ -2437,9 +2449,9 @@ zapravka.iiko.it
           <div class="ds-card ds-card--outlined">
             <div class="ds-card__content"><div class="xh-row">
               <span class="xh-caption">Мониторинги:</span>
-              <a class="xh-link" data-sim="Открыт Cloud Alerts по серверу|monitoring">Cloud Alerts</a>
-              <a class="xh-link" data-sim="Открыт Victoria Logs по серверу|monitoring">Victoria</a>
-              <a class="xh-link" data-sim="Открыт дашборд Metabase по кластеру|monitoring">Metabase</a>
+              <a class="xh-link" data-sim="Открыт Cloud Alerts по серверу|monitor_heart">Cloud Alerts</a>
+              <a class="xh-link" data-sim="Открыт Victoria Logs по серверу|monitor_heart">Victoria</a>
+              <a class="xh-link" data-sim="Открыт дашборд Metabase по кластеру|monitor_heart">Metabase</a>
             </div></div>
           </div>
         </div>
@@ -2962,7 +2974,7 @@ ORDER BY s.date_open;</textarea>
       <div class="xh-head__actions">
         <span class="ds-checkbox"><input class="ds-checkbox__input" type="checkbox" id="log-rot" checked><span class="ds-checkbox__box material-icons" aria-hidden="true"></span><label class="ds-checkbox__label" for="log-rot">Ротационные zip (K8s)</label></span>
         <div class="ds-btn-group ds-btn-group--horizontal">
-          <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-sim="Открыт Victoria Logs по серверу klient-142 — поиск по всем логам клиента (DO-899)|monitoring"><span class="ds-btn__icon material-icons">monitoring</span><span class="ds-btn__label">V · Victoria Logs</span></button>
+          <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-sim="Открыт Victoria Logs по серверу klient-142 — поиск по всем логам клиента (DO-899)|monitor_heart"><span class="ds-btn__icon material-icons">monitor_heart</span><span class="ds-btn__label">V · Victoria Logs</span></button>
           <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" id="logZip"><span class="ds-btn__icon material-icons">folder_zip</span><span class="ds-btn__label">Скачать ZIP</span></button>
           <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" data-share="klient-142/error.log"><span class="ds-btn__icon material-icons">link</span><span class="ds-btn__label">Поделиться ссылкой</span></button>
         </div>
@@ -3828,11 +3840,17 @@ ORDER BY s.date_open;</textarea>
           </div>
           <div class="xh-col">
             <span class="ds-field-label">Причина выдачи</span>
-            <div class="ds-select-form ds-select-form--populated">
-              <div class="ds-select-form__input"><div class="ds-select-form__input-frame">
-                <span class="ds-select-form__label">По заявке (iikoOffice)</span>
-                <span class="ds-select-form__icon material-icons" aria-hidden="true">keyboard_arrow_down</span>
-              </div></div>
+            <div class="xh-dd-host" id="iuserReasonHost">
+              <button class="ds-btn ds-btn--m ds-btn--neutral ds-btn--outlined" type="button" aria-haspopup="listbox" aria-label="Причина выдачи">
+                <span class="ds-btn__label" id="iuserReasonLabel">По заявке (iikoOffice)</span>
+                <span class="ds-btn__icon material-icons" aria-hidden="true">keyboard_arrow_down</span>
+              </button>
+              <div class="xh-dd" hidden role="listbox" aria-label="Причина выдачи" id="iuserReasonDd">
+                <div class="ds-list-container__item" role="option" data-v="office" data-label="По заявке (iikoOffice)" aria-selected="true"><span class="ds-list-container__label">По заявке (iikoOffice)</span><span class="xh-dd__mark material-icons">check</span></div>
+                <div class="ds-list-container__item" role="option" data-v="pyrus" data-label="По заявке (Pyrus)" aria-selected="false"><span class="ds-list-container__label">По заявке (Pyrus)</span><span class="xh-dd__mark material-icons">check</span></div>
+                <div class="ds-list-container__item" role="option" data-v="call" data-label="По звонку клиента" aria-selected="false"><span class="ds-list-container__label">По звонку клиента</span><span class="xh-dd__mark material-icons">check</span></div>
+                <div class="ds-list-container__item" role="option" data-v="inner" data-label="Внутренняя проверка (L3)" aria-selected="false"><span class="ds-list-container__label">Внутренняя проверка (L3)</span><span class="xh-dd__mark material-icons">check</span></div>
+              </div>
             </div>
             <span class="ds-field-label">Срок действия</span>
             <div class="ds-checkbox-group ds-checkbox-group--vertical">
@@ -6896,6 +6914,54 @@ ORDER BY s.date_open;</textarea>
     document.addEventListener('click', function (e) { if (!e.target.closest('.xh-rail__foot')) userMenu.hidden = true; });
   }
 })();
+
+  /* Э-35: живые селекты-дропдауны (Автообновление · Причина выдачи · service) — были витринами
+     (заказчик 22.09: «селект не работает»). Механика — как у фильтров каталогов: host → кнопка → .xh-dd. */
+  (function () {
+    var hosts = ['autoRefHost', 'iuserReasonHost', 'svcEnvHost'];
+    function closeAll(except) {
+      hosts.forEach(function (id) {
+        if (id === except) return;
+        var el = document.getElementById(id);
+        var dd = el && el.querySelector('.xh-dd');
+        if (dd) dd.hidden = true;
+      });
+    }
+    var notes = {
+      autoRefHost: function (v, label) {
+        return v === 'off'
+          ? ['Автообновление выключено — обновляйте вручную кнопкой «Перепроверить»', 'update']
+          : ['Автообновление: ' + label.replace('Автообновление: ', '') + ' — статус и версия будут опрашиваться автоматически', 'update'];
+      },
+      iuserReasonHost: function (v, label) { return ['Причина выдачи: ' + label + ' — запись добавлена в журнал выдачи (LIC)', 'key']; },
+      svcEnvHost: function (v, label) { return [label + ' — изменится после перезапуска службы (IIKOWEB)', 'settings']; }
+    };
+    hosts.forEach(function (id) {
+      var host = document.getElementById(id);
+      if (!host) return;
+      var dd = host.querySelector('.xh-dd'), btn = host.querySelector('button'), lab = host.querySelector('.ds-btn__label');
+      if (!dd || !btn || !lab) return;
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var open = dd.hidden;
+        closeAll(id);
+        dd.hidden = !open;
+      });
+      [].slice.call(dd.querySelectorAll('[data-v]')).forEach(function (opt) {
+        opt.addEventListener('click', function () {
+          lab.textContent = opt.dataset.label;
+          [].slice.call(dd.querySelectorAll('[data-v]')).forEach(function (o) { o.setAttribute('aria-selected', o === opt ? 'true' : 'false'); });
+          dd.hidden = true;
+          var n = notes[id](opt.dataset.v, opt.dataset.label);
+          xhSnack(n[0], n[1]);
+        });
+      });
+    });
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('#autoRefHost') && !e.target.closest('#iuserReasonHost') && !e.target.closest('#svcEnvHost')) closeAll();
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(); });
+  })();
 </script>
 </body>
 </html>
